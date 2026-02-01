@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from models import SessionLocal, Employee, Attendance
 from pydantic import BaseModel
-from pydantic_extra_types.email import EmailStr
+from pydantic import EmailStr
 from typing import List
 from datetime import date
 
