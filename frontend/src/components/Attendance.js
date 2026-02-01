@@ -14,9 +14,8 @@ const Attendance = ({ employees }) => {
     setSelectedEmployee(empId);
     if (empId) {
       try {
-        const response = await fetch(`http://localhost:8000/attendance/${empId}`);
-        const data = await response.json();
-        setAttendanceRecords(data);
+        const response = await getAttendance(empId);
+        setAttendanceRecords(response.data);
       } catch (error) {
         console.error('Error fetching attendance:', error);
       }
