@@ -2,7 +2,8 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from models import SessionLocal, Employee, Attendance
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
+from pydantic_extra_types.email import EmailStr
 from typing import List
 from datetime import date
 
@@ -58,7 +59,7 @@ def create_employee(employee: EmployeeCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Employee ID already exists")
     if db.query(Employee).filter(Employee.email == employee.email).first():
         raise HTTPException(status_code=400, detail="Email already exists")
-    db_employee = Employee(**employee.dict())
+    db_employee = Employee(**employee.model_dump())
     db.add(db_employee)
     db.commit()
     db.refresh(db_employee)
@@ -88,7 +89,7 @@ def mark_attendance(attendance: AttendanceCreate, db: Session = Depends(get_db))
     existing = db.query(Attendance).filter(Attendance.employee_id == attendance.employee_id, Attendance.date == attendance.date).first()
     if existing:
         raise HTTPException(status_code=400, detail="Attendance already marked for this date")
-    db_attendance = Attendance(**attendance.dict())
+    db_attendance = Attendance(**attendance.model_dump())
     db.add(db_attendance)
     db.commit()
     db.refresh(db_attendance)
@@ -97,3 +98,7 @@ def mark_attendance(attendance: AttendanceCreate, db: Session = Depends(get_db))
 @app.get("/attendance/{employee_id}", response_model=List[AttendanceResponse])
 def get_attendance(employee_id: str, db: Session = Depends(get_db)):
     return db.query(Attendance).filter(Attendance.employee_id == employee_id).all()
+
+if __name__ == '__main__':
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
