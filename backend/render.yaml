@@ -1,9 +1,11 @@
 services:
   - type: web
     name: hrms-lite-backend
-    runtime: python3
+    env: python
+    plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
     envVars:
       - key: DATABASE_URL
-        value: sqlite:///./hrms_lite.db
+        fromEnvVar: DATABASE_URL
+
