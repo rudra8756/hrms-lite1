@@ -5,6 +5,9 @@ from models import SessionLocal, Employee, Attendance
 from pydantic import BaseModel, EmailStr
 from typing import List
 from datetime import date
+from models import Base, engine
+Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI(title="HRMS Lite API")
 
